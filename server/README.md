@@ -43,7 +43,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 Setting up the Server express js:
-You need to Check /Create the .env file to put the mongo db url for the database
+
 1-cd to server folder
 2-npm install
 3-npm start

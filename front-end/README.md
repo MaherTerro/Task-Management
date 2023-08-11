@@ -1,25 +1,16 @@
-# Task-Management
-Welcome to the documentation for my project! This guide will help you get started with setting up Next.js and an Express.js server.
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
+First, run the development server:
 
-Before you begin, make sure you have the following installed:
-
-- [Node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
-
-### Setting Up Next.js
-
- 1-Clone this repository to your editor 
- 2-cd to the front end project
- 3-npm install
- 4-npm run dev
-
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -42,9 +33,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-Setting up the Server express js:
-You need to Check /Create the .env file to put the mongo db url for the database
-1-cd to server folder
-2-npm install
-3-npm start
-The Express.js server will start at http://localhost:5000.
+
