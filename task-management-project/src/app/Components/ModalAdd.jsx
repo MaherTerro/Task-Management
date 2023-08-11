@@ -5,6 +5,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useAddTaskMutation } from "../Services/taskapi";
 import { useEffect, useState } from 'react';
+//validation form
 const validationSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
     description: Yup.string().required('Description is required'),
@@ -13,9 +14,10 @@ const validationSchema = Yup.object().shape({
  
 
 const CustomModal = ({ isOpen, onRequestClose,  onModalClose }) => {
-    const [add, result] = useAddTaskMutation();
+    //we use this mutation to add task
+  const [add, result] = useAddTaskMutation();
    
-
+//on form submit we call this method
     const onSubmit = async (values) => {
         console.log(values)
       try {
@@ -34,6 +36,7 @@ const CustomModal = ({ isOpen, onRequestClose,  onModalClose }) => {
         alert("An error occurred during update");
       }
     };
+    //initial values of form
     const initialValues = {
         userid:sessionStorage.getItem('userid'),
         title: '',
@@ -123,7 +126,7 @@ const CustomModal = ({ isOpen, onRequestClose,  onModalClose }) => {
                   Due Date
                 </label>
                 <Field
-                  type="date"
+                  type="datetime-local"
                   id="duedate"
                   name="duedate"
                   className="w-full px-3 py-2 border rounded-lg" 

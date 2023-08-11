@@ -6,18 +6,21 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
   const router=useRouter();
   const[email,setemail]=useState('');
-  const[islogedin,setislogedin]=useState('');
+  
   useEffect(() => {
     const storedEmail = sessionStorage.getItem('userEmail');
     if (typeof window !== 'undefined' && storedEmail) {
       setemail(storedEmail);
     }
   }, []);
+//here is the get started button to check if user is logged in route to my tasks page,if not go to sign up
   function getstarted(){
+   
     if(!email){
       router.push('/SignUp') 
       }else router.push('/My-Tasks')
   }
+
   return (
     <div className="container mx-auto p-4">
  
@@ -29,12 +32,12 @@ export default function Home() {
         <h2 className="text-2xl font-semibold mb-6 text-white font-serif ">General Information</h2>
         <p className="text-gray-600 text-lg text-white antialiased">
         Stay organized and manage your tasks efficiently with Task Manager. Keep track of
-    important deadlines, set reminders, and easily categorize your tasks for improved
+    important deadlines, and easily categorize your tasks for improved
     productivity. With Task Manager, you can focus on what matters most and stay on top of your
     to-do list.
         </p>
         <div className='sm:text-center hidden sm:block lg:text-start'>
-        <button className=" mt-10 bg-blue-500 text-white py-3 px-6 rounded-lg focus:outline-none focus:ring focus:border-blue-400" onClick={() =>router.push('/SignUp') }>
+        <button className=" mt-10 bg-blue-500 text-white py-3 px-6 rounded-lg focus:outline-none focus:ring focus:border-blue-400" onClick={() =>getstarted() }>
       Get Started
     </button>
     </div>

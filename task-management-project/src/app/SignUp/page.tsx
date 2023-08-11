@@ -8,20 +8,23 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSignupMutation } from "../Services/taskapi";
 import * as Yup from 'yup';
-import { useSelector, useDispatch } from 'react-redux';
+
 
 
 const page = () => {
-  const user = useSelector((state:any) => state.user);
+ 
+
     const router = useRouter();
+ //import signup mutation from the server
     const [signup, result] = useSignupMutation();
+//initial values of form
     const initialValues = {
         username: '',
         email: '',
         password: '',
         confirmPassword: '',
       };
-    
+    //validation for form
       const validationSchema = Yup.object().shape({
         username: Yup.string().required('Username is required'),
         email: Yup.string().email('Invalid email').required('Email is required'),
@@ -30,10 +33,12 @@ const page = () => {
           .oneOf([Yup.ref('password')], 'Passwords must match')
           .required('Confirm Password is required'),
       });
+      //handle signup click button
       const handleSignUp = async (values: any) => {
         try {
+          //signup request
           const mutationResult = await signup(values);
-      
+      //if data response ,sign up successfully
           if ('data' in mutationResult) {
             sessionStorage.setItem('userEmail', JSON.stringify(values.email));
             sessionStorage.setItem('islogedin', '1');

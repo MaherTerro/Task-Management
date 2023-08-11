@@ -1,5 +1,5 @@
 import {createApi,fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-  
+  //Apis request end points from express js server  for each action then export the mutations to use them in the project
   export const taskApi = createApi({
     reducerPath: "tasksApi",
     baseQuery: fetchBaseQuery({

@@ -12,6 +12,7 @@ export const Header = () => {
         setMobileMenuOpen(!mobileMenuOpen);
       };
       const[islogedin,setislogedin]=useState('0');
+      //this code will run when the route changes
   useEffect(() => {
     const islogedin = sessionStorage.getItem('islogedin');
     if (typeof window !== 'undefined' && islogedin) {
@@ -20,15 +21,19 @@ export const Header = () => {
     }
   }, [route]);
   const[email,setemail]=useState('');
+  //save the user name to display it in the header if is loged in
   const[username,setusername]=useState('');
+   //this code will run when the route changes
   useEffect(() => {
     const storedEmail = sessionStorage.getItem('userEmail');
     const storedusername = sessionStorage.getItem('username');
+    //if values are not null in session save the data in states
     if (typeof window !== 'undefined' && storedEmail && storedusername) {
       setemail(storedEmail);
       setusername(storedusername);
     }
   },  [route]);
+  //handle logout 
   const logout = () => {
     sessionStorage.removeItem('userEmail');
     sessionStorage.removeItem('islogedin');
@@ -96,7 +101,7 @@ router.push('/');
      </div>
          )}
 
-
+{/*if is loged in show the logout button */}
           {islogedin=='1' &&  (
           <div>
        <button onClick={logout} className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-3 py-2.5 text-center  mb-2">
@@ -135,7 +140,7 @@ router.push('/');
             </Link>
           </li>
         </ul>
-     
+     {/*if isnt loged in show the login and sign up links */}
       <div className=" lg:hidden   ">
         {islogedin!=='1' &&  (
           <div className='text-center '>
@@ -152,7 +157,7 @@ router.push('/');
          )}
 
 
-
+{/*if is loged in show the username */}
  {islogedin=='1' &&  (
        <div className=" rounded-md bg-gradient-to-r from-blue-300 to-white  items-center text-sm px-2 py-2.5 text-center  mb-2">
        <p className="text-gray-600">{username.replace(/"/g, '')}</p>

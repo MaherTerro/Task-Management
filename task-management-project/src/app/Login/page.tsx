@@ -14,22 +14,25 @@ import { useLoginMutation } from "../Services/taskapi";
 export default function Home() {
     const router = useRouter();
     const [login, result] = useLoginMutation();
+    
+
     const initialValues = {
         email: '',
         password: '',
       };
-    
+    //validation
       const validationSchema = Yup.object().shape({
         email: Yup.string().required('email is required'),
         password: Yup.string().required('Password is required'),
       });
    
-
+//handle login click button
       const handleLogin = async (values: any) => {
        
         try {
+          //request login from the server
           const mutationResult = await login(values);
-      
+      //if data response so the user logged in and save settings
           if ('data' in mutationResult) {
             const userData = mutationResult.data;
             sessionStorage.setItem('userEmail', JSON.stringify(values.email));

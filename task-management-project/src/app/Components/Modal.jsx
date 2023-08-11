@@ -4,16 +4,20 @@ import Modal from 'react-modal';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useUpdateTaskMutation } from "../Services/taskapi";
+//validation form
 const validationSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
     description: Yup.string().required('Description is required'),
     duedate: Yup.date().required('Due Date is required'),
   });
  
-
+//this modal need the item because we should put the values of this item in the form inputs
 const CustomModal = ({ isOpen, onRequestClose, item, onModalClose }) => {
-    const [update, result] = useUpdateTaskMutation();
-   
+    //we use this mutation to update a specific task
+  const [update, result] = useUpdateTaskMutation();
+
+
+   //on form submit we call this method
     const onSubmit = async (values) => {
         console.log(values)
       try {
@@ -32,6 +36,7 @@ const CustomModal = ({ isOpen, onRequestClose, item, onModalClose }) => {
         alert("An error occurred during update");
       }
     };
+    //here we put by deffault the values of the want update item into the update form inputs
     const initialValues = {
         id:item._id,
         title: item.title,
@@ -121,7 +126,7 @@ const CustomModal = ({ isOpen, onRequestClose, item, onModalClose }) => {
                   Due Date
                 </label>
                 <Field
-                  type="date"
+                  type="datetime-local"
                   id="duedate"
                   name="duedate"
                   className="w-full px-3 py-2 border rounded-lg" 

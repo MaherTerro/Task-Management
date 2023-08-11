@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useTasksMutation } from "../Services/taskapi";
 import { useDeleteTaskMutation } from "../Services/taskapi";
 import { useCompleteTaskMutation } from "../Services/taskapi";
+import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 export default function Home() {
  
@@ -13,29 +14,30 @@ export default function Home() {
 
   const [deletetask , deleteresult] = useDeleteTaskMutation();
   const [completetask , comresult] = useCompleteTaskMutation();
-  const[userid,setuserid]=useState('');
-  const[islogedin,setislogedin]=useState('');
+ 
+
   const [tasksList, setTasksList] = useState([]);
   const[wantupdate,setwantupdate]=useState(false);
   const[wantupdateitem,setwantupdateitem]=useState(null);
   const[wantadd,setwantadd]=useState(false);
   const[fetch,setfetch]=useState(false);
+  const[loading,setloading]=useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 5;
-  const handleCloseModal = () => {
-    setwantupdate(false);
-  };
-  const handleCloseModaladd = () => {
-    setwantadd(false);
-  };
+
+ //first we initialize a router
   const router2 = useRouter();
+  //check if loged in
   const isloged = sessionStorage.getItem('islogedin');
+  //if not loged alert + navigate to home
   if(isloged==='0' || isloged==null){
     alert("You need to login or sign up in order to Use My tasks Page")
     router2.push('/');
   }
   useEffect(() => {
+
     const fetchData = async () => {
+      //before fetching check user if its still loged in
       const isloged = sessionStorage.getItem('islogedin');
       const userid = sessionStorage.getItem('userid');
 
@@ -49,6 +51,7 @@ export default function Home() {
 
     fetchData();
   }, [] );
+  //fetch data if wantupdatestate change
   useEffect(() => {
     const fetchData = async () => {
       const isloged = sessionStorage.getItem('islogedin');
@@ -57,6 +60,7 @@ export default function Home() {
       if (isloged === '1' && userid) {
         const mutationResult = await tasks(userid); 
         if ('data' in mutationResult) {
+          setloading(false)
           setTasksList(mutationResult.data); 
         }
       }
@@ -64,6 +68,9 @@ export default function Home() {
 
     fetchData();
   }, [wantupdate]);
+
+    //fetch data if wantaddstate change
+
   useEffect(() => {
     const fetchData = async () => {
       const isloged = sessionStorage.getItem('islogedin');
@@ -79,6 +86,7 @@ export default function Home() {
 
     fetchData();
   }, [wantadd]);
+  //fetch data if fetch state change
   useEffect(() => {
     const fetchData = async () => {
       const isloged = sessionStorage.getItem('islogedin');
@@ -94,12 +102,15 @@ export default function Home() {
 
     fetchData();
   }, [fetch]);
+  //delete task function
   async function handleDelete(task: any) {
     const shouldDelete = window.confirm("Are you sure you want to delete this task?");
   
     if (shouldDelete) {
       try {
+        //delete task request
         await deletetask(task._id);
+        //change fetchstate in order to get all tasks again
         setfetch(!fetch);
         
       
@@ -110,11 +121,13 @@ export default function Home() {
       }
     }
   }
+  //complete button function
   async function handleComplete(task: any) {
     const shouldCOMPLETE = window.confirm("Are you sure you want to Set this task Completed?");
   
     if (shouldCOMPLETE) {
       try {
+        //complete task request 
         await completetask(task._id);
         setfetch(!fetch);
         
@@ -126,23 +139,35 @@ export default function Home() {
       }
     }
   }
-
+//handle update button with the task you need to update it
   function handleUpdate(task:any) {
     setwantupdate(true);
 setwantupdateitem(task);
   }
+  //handle add click to open the modal of add task
   function handleAdd() {
     setwantadd(true);
 
   }
+   //handle close update modal 
+  const handleCloseModalUpdate = () => {
+    setwantupdate(false);
+  };
+   //handle close add task modal 
+  const handleCloseModaladd = () => {
+    setwantadd(false);
+  };
+//calculation for pagination
   const totalPages = Math.ceil(tasksList.length / tasksPerPage);
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const tasksToShow = tasksList.slice(indexOfFirstTask, indexOfLastTask);
+
   return (
     <div className="container mx-auto p-5">
 <div className='flex justify-between items-center mb-4'>
   <h1 className="text-3xl text-center text-white  font-serif ">My Tasks</h1>
+  {/* add task button */}
   <button
     type="submit"
     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none flex items-center" onClick={() => handleAdd()}
@@ -163,7 +188,17 @@ setwantupdateitem(task);
 </div>
 
     <ul className="bg-white rounded-lg shadow p-5">
-    {tasksToShow.length === 0 ? ( 
+{/* if is still fetching data from the server show the loading spinner */}
+    {loading==true && ( 
+      
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+      </div>
+    )}
+
+
+{/* if the tasks to show length is 0 and its finished fetching from the server ,show message you dont have any tasks,if no show the tasks */}
+    {tasksToShow.length === 0 && loading!=true ? ( 
       <p className="text-gray-600 text-center text-xl py-40">You don't have any tasks to do.</p>
     ) : (
     tasksToShow.map((task: any) => (
@@ -171,7 +206,7 @@ setwantupdateitem(task);
     <div className="flex flex-col p-3">
     <h2 className="text-xl font-semibold pb-4">{task.title}</h2>
     <p className="text-gray-600 text-base">Description: {task.description}</p>
-    <p className="text-gray-600">Due: {task.duedate}</p>
+    <p className="text-gray-600">Due:  {format(new Date(task.duedate), 'MMMM d, yyyy, HH:mm:ss')}</p>
     </div>
     <div className="flex flex-col items-center ml-4 w-52">
 
@@ -191,18 +226,21 @@ setwantupdateitem(task);
     </button>
     </div>
     <div>
+      {/*if task is not completed show a enabled button  else show a disabled button */}
   {!task.iscompleted ? (
     <button
       className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none mt-2" onClick={() => handleComplete(task)}
     >
       Complete
     </button>
+    
   ) : (
+    
     <button
       className="bg-green-300 text-white font-semibold py-2 px-4 rounded-full focus:outline-none mt-2 cursor-not-allowed"
       disabled
     >
-      Complete
+      Completed
     </button>
   )}
 </div>
@@ -213,10 +251,11 @@ setwantupdateitem(task);
       ))
     )}
     </ul>
+     {/*if wantupdate state is true open the update  modal,and here we have included a methods to close it and reset the states */}
     {wantupdate && (
         <Modal
           isOpen={wantupdate !== null}
-          onRequestClose={handleCloseModal}
+          onRequestClose={handleCloseModalUpdate}
           item={wantupdateitem}
           onModalClose={() => {
             setwantupdate(false); 
@@ -224,6 +263,7 @@ setwantupdateitem(task);
           }}
         />
       )}
+      {/*if wantadd state is true open the add modal,and here we have included a methods to close it and reset the states */}
        {wantadd && (
         <Modaladd
           isOpen={wantadd !== null}
@@ -235,6 +275,7 @@ setwantupdateitem(task);
           }}
         />
       )}
+      {/*Pagination code */}
      <div className="flex justify-center mt-4">
   {currentPage > 1 ? (
     <button
@@ -292,6 +333,7 @@ setwantupdateitem(task);
 </div>
     </div>
   )
+  {/*function to retrieve the remaining due time and date for a task */}
   function getRemainingTime(dueDate: string | number | Date) {
     const now = new Date();
     const due = new Date(dueDate);
